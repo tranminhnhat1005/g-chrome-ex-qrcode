@@ -1,0 +1,43 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      text-align: center;
+      width: 200px;
+    }
+
+    #text-input {
+      width: 180px;
+      padding: 10px;
+    }
+
+    #qr-code {
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      margin-top: 20px;
+    }
+
+    #generate-btn {
+      margin-top: 20px;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>QR Code Generator</h2>
+  <input type="text" id="text-input" placeholder="Enter text">
+  <button id="generate-btn">GENERATE</button>
+  <div id="qr-code" title="objective"></div>
+  <script src="qrcode.min.js"></script>
+  <script src="popup.js"></script>
+</body>
+
+</html>
