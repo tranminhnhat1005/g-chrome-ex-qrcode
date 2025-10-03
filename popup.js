@@ -96,10 +96,6 @@ class QRCodeGeneratorPro {
     // Set size select
     document.getElementById('size-select').value = this.settings.size;
 
-    // Set container class for responsive layout
-    const container = document.querySelector('.container');
-    container.className = 'container size-' + this.settings.size;
-
     // Set sliders and displays
     document.getElementById('padding-control').value = this.settings.padding;
     document.getElementById('padding-display').textContent = `${this.settings.padding}px`;
@@ -107,6 +103,9 @@ class QRCodeGeneratorPro {
     // Set color pickers
     document.getElementById('fg-color').value = this.settings.foregroundColor;
     document.getElementById('bg-color').value = this.settings.backgroundColor;
+    
+    // Update size info
+    this.updateSizeInfo();
   }
 
   // Set QR code size
@@ -116,12 +115,26 @@ class QRCodeGeneratorPro {
 
     // Update UI
     document.getElementById('size-select').value = size;
-
-    // Update container class for responsive layout
-    const container = document.querySelector('.container');
-    container.className = 'container size-' + size;
+    
+    // Update size info display
+    this.updateSizeInfo();
 
     this.autoRegenerate();
+  }
+
+  // Update size information display
+  updateSizeInfo(size) {
+    const sizeInfo = document.getElementById('size-info');
+    
+    if (size >= 1024) {
+      sizeInfo.textContent = 'Preview scaled to fit popup. Download for full 1024px quality.';
+      sizeInfo.className = 'size-info large-size show';
+    } else if (size >= 512) {
+      sizeInfo.textContent = 'High resolution QR code';
+      sizeInfo.className = 'size-info show';
+    } else {
+      sizeInfo.className = 'size-info';
+    }
   }
 
   // Set padding
@@ -158,12 +171,14 @@ class QRCodeGeneratorPro {
   }
 
   // Generate QR code with current settings
+  // Generate QR code with fixed 200px preview size
   generateQRCode() {
     const text = document.getElementById('text-input').value.trim();
     
     if (!text) {
       this.showPlaceholder('Please enter some text to generate QR code');
       this.hideDownloadSection();
+      this.hideSizeInfo();
       return;
     }
 
@@ -171,6 +186,7 @@ class QRCodeGeneratorPro {
       // Show loading state
       this.showPlaceholder('Generating QR code...');
       this.hideDownloadSection();
+      this.hideSizeInfo();
 
       // Clear previous QR code
       const qrContainer = document.getElementById('qr-code');
@@ -178,33 +194,33 @@ class QRCodeGeneratorPro {
       setTimeout(() => {
         qrContainer.innerHTML = '';
 
-        // Create new QR code with current settings
-        // Note: qrcode.min.js uses different parameter names
+        // Always create preview at 200px for consistent UI
+        const previewSize = 200;
         this.currentQR = new QRCode(qrContainer, {
           text: text,
-          width: this.settings.size,
-          height: this.settings.size,
+          width: previewSize,
+          height: previewSize,
           colorDark: this.settings.foregroundColor,
           colorLight: this.settings.backgroundColor,
           correctLevel: QRCode.CorrectLevel.M,
-          // Apply padding by creating a larger canvas and centering the QR
-          quietZone: this.settings.padding,
+          quietZone: Math.floor(this.settings.padding * (previewSize / this.settings.size)), // Scale padding for preview
           quietZoneColor: this.settings.backgroundColor
         });
 
         // Add success animation and show download section
         setTimeout(() => {
-          qrContainer.style.transform = 'scale(0.8)';
-          qrContainer.style.opacity = '0.5';
+          qrContainer.style.transform = 'scale(0.9)';
+          qrContainer.style.opacity = '0.7';
           
           setTimeout(() => {
             qrContainer.style.transform = 'scale(1)';
             qrContainer.style.opacity = '1';
-            qrContainer.style.transition = 'all 0.3s ease';
+            qrContainer.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
             
-            // Show download section after animation
+            // Show download section and size info after animation
             this.showDownloadSection();
-          }, 100);
+            this.showSizeInfo();
+          }, 150);
         }, 200);
       }, 100);
 
@@ -212,6 +228,7 @@ class QRCodeGeneratorPro {
       console.error('QR generation failed:', error);
       this.showPlaceholder('Failed to generate QR code. Please try again.');
       this.hideDownloadSection();
+      this.hideSizeInfo();
     }
   }
 
@@ -233,11 +250,32 @@ class QRCodeGeneratorPro {
     downloadSection.classList.remove('show');
   }
 
+  // Show size info
+  showSizeInfo() {
+    const sizeInfo = document.getElementById('size-info');
+    const actualSizeSpan = document.getElementById('actual-size');
+    actualSizeSpan.textContent = `${this.settings.size}px`;
+    sizeInfo.classList.add('show');
+  }
+
+  // Hide size info
+  hideSizeInfo() {
+    const sizeInfo = document.getElementById('size-info');
+    sizeInfo.classList.remove('show');
+  }
+
+  // Update size info display
+  updateSizeInfo() {
+    if (document.getElementById('qr-code').querySelector('canvas')) {
+      this.showSizeInfo();
+    }
+  }
+
   // Download QR code as PNG or SVG
   downloadQR(format = 'png') {
-    const canvas = document.querySelector('#qr-code canvas');
-    if (!canvas) {
-      alert('No QR code to download. Please generate a QR code first.');
+    const text = document.getElementById('text-input').value.trim();
+    if (!text) {
+      alert('No text entered. Please generate a QR code first.');
       return;
     }
 
@@ -248,7 +286,7 @@ class QRCodeGeneratorPro {
       if (format === 'svg') {
         this.downloadSVG(timestamp);
       } else {
-        this.downloadPNG(canvas, timestamp);
+        this.downloadPNG(null, timestamp); // Pass null since we'll generate fresh canvas
       }
     } catch (error) {
       console.error(`${format.toUpperCase()} download failed:`, error);
@@ -258,8 +296,15 @@ class QRCodeGeneratorPro {
 
   // Download as PNG
   downloadPNG(canvas, timestamp) {
+    // Generate QR at actual size for download
+    const actualCanvas = this.generateActualSizeCanvas();
+    if (!actualCanvas) {
+      alert('Failed to generate high-resolution QR code for download.');
+      return;
+    }
+
     // Create enhanced canvas with proper padding
-    const enhancedCanvas = this.createEnhancedCanvas(canvas);
+    const enhancedCanvas = this.createEnhancedCanvas(actualCanvas);
     
     const filename = `qrcode_${timestamp}.png`;
     
@@ -275,6 +320,51 @@ class QRCodeGeneratorPro {
     
     // Visual feedback
     this.showFeedback('download-btn', 'Downloaded! 📥');
+  }
+
+  // Generate canvas at actual size for download
+  generateActualSizeCanvas() {
+    const text = document.getElementById('text-input').value.trim();
+    if (!text) return null;
+
+    // Create temporary container off-screen
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.top = '-9999px';
+    document.body.appendChild(tempContainer);
+
+    try {
+      // Generate QR at actual size
+      const tempQR = new QRCode(tempContainer, {
+        text: text,
+        width: this.settings.size,
+        height: this.settings.size,
+        colorDark: this.settings.foregroundColor,
+        colorLight: this.settings.backgroundColor,
+        correctLevel: QRCode.CorrectLevel.M,
+        quietZone: this.settings.padding,
+        quietZoneColor: this.settings.backgroundColor
+      });
+
+      // Wait a moment for generation to complete
+      setTimeout(() => {
+        const canvas = tempContainer.querySelector('canvas');
+        if (canvas) {
+          return canvas;
+        }
+      }, 100);
+
+      const canvas = tempContainer.querySelector('canvas');
+      return canvas;
+    } finally {
+      // Clean up
+      setTimeout(() => {
+        if (tempContainer.parentNode) {
+          document.body.removeChild(tempContainer);
+        }
+      }, 200);
+    }
   }
 
   // Download as SVG
@@ -397,8 +487,11 @@ class QRCodeGeneratorPro {
 
   // Create enhanced canvas with proper padding
   createEnhancedCanvas(originalCanvas) {
+    if (!originalCanvas) return null;
+    
     const padding = this.settings.padding;
-    const newSize = this.settings.size + (padding * 2);
+    const canvasSize = originalCanvas.width; // Use actual canvas size
+    const newSize = canvasSize + (padding * 2);
     
     const enhancedCanvas = document.createElement('canvas');
     enhancedCanvas.width = newSize;
