@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "QR Code Generator",
-  "version": "1.0",
-  "description": "Generate a QR code from any text",
+  "name": "QR Code Generator Pro",
+  "version": "2.0.0",
+  "description": "Advanced QR code generator with customization options - colors, sizes, padding and more",
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -11,5 +11,12 @@
       "128": "icon128.png"
     }
   },
-  "permissions": []
+  "permissions": [
+    "storage"
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
 }
