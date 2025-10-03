@@ -9,10 +9,10 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       padding: 15px;
       min-width: 350px;
-      max-width: 500px;
+      max-width: 600px;
       width: max-content;
       margin: 0;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
       color: #333;
     }
 
@@ -56,7 +56,7 @@
 
     #text-input:focus {
       outline: none;
-      border-color: #667eea;
+      border-color: #2a5298;
     }
 
     .controls-grid {
@@ -84,34 +84,19 @@
     }
 
     .control-item select {
-      padding: 8px;
+      padding: 8px 12px;
       border: 2px solid #e0e0e0;
       border-radius: 6px;
       margin-top: 5px;
       background: white;
-    }
-
-    .size-buttons {
-      display: flex;
-      gap: 5px;
-      margin-top: 5px;
-    }
-
-    .size-btn {
-      flex: 1;
-      padding: 8px;
-      border: 2px solid #e0e0e0;
-      background: white;
-      border-radius: 6px;
+      font-size: 14px;
       cursor: pointer;
-      font-size: 11px;
-      transition: all 0.3s;
+      transition: border-color 0.3s;
     }
 
-    .size-btn.active {
-      background: #667eea;
-      color: white;
-      border-color: #667eea;
+    .control-item select:focus {
+      outline: none;
+      border-color: #2a5298;
     }
 
     .range-display {
@@ -124,7 +109,7 @@
     #generate-btn {
       width: 100%;
       padding: 15px;
-      background: linear-gradient(45deg, #667eea, #764ba2);
+      background: linear-gradient(45deg, #1e3c72, #2a5298);
       color: white;
       border: none;
       border-radius: 8px;
@@ -176,33 +161,50 @@
     }
 
     #download-btn {
-      background: linear-gradient(45deg, #28a745, #20c997);
+      background: linear-gradient(45deg, #1565c0, #1976d2);
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 10px 15px;
       border-radius: 6px;
       cursor: pointer;
       font-size: 12px;
       font-weight: 600;
       transition: transform 0.2s;
-      margin: 0 5px;
+      margin: 0 3px;
     }
 
     #download-btn:hover {
       transform: translateY(-1px);
     }
 
-    #copy-btn {
-      background: linear-gradient(45deg, #007bff, #0056b3);
+    #download-svg-btn {
+      background: linear-gradient(45deg, #0d47a1, #1565c0);
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 10px 15px;
       border-radius: 6px;
       cursor: pointer;
       font-size: 12px;
       font-weight: 600;
       transition: transform 0.2s;
-      margin: 0 5px;
+      margin: 0 3px;
+    }
+
+    #download-svg-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    #copy-btn {
+      background: linear-gradient(45deg, #424242, #616161);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: transform 0.2s;
+      margin: 0 3px;
     }
 
     #copy-btn:hover {
@@ -219,15 +221,22 @@
     /* Responsive adjustments for different QR sizes */
     .container.size-128 { min-width: 350px; }
     .container.size-256 { min-width: 400px; }
-    .container.size-384 { min-width: 450px; }
+    .container.size-512 { min-width: 550px; }
+    .container.size-1024 { min-width: 650px; }
     
-    @media (max-width: 500px) {
+    @media (max-width: 700px) {
       body { 
         min-width: 320px;
-        max-width: 400px;
+        max-width: 500px;
       }
-      .container.size-384 {
-        min-width: 380px;
+      .container.size-512 {
+        min-width: 480px;
+      }
+      .container.size-1024 {
+        min-width: 500px;
+      }
+      #qr-code {
+        overflow: auto;
       }
     }
   </style>
@@ -244,12 +253,13 @@
 
     <div class="controls-grid">
       <div class="control-item">
-        <label for="size-control">Size</label>
-        <div class="size-buttons">
-          <button class="size-btn active" data-size="128">128px</button>
-          <button class="size-btn" data-size="256">256px</button>
-          <button class="size-btn" data-size="384">384px</button>
-        </div>
+        <label for="size-select">Size</label>
+        <select id="size-select">
+          <option value="128">128px</option>
+          <option value="256" selected>256px</option>
+          <option value="512">512px</option>
+          <option value="1024">1024px</option>
+        </select>
       </div>
 
       <div class="control-item">
@@ -276,8 +286,9 @@
     </div>
 
     <div class="download-section" id="download-section">
-      <button id="download-btn">📥 Download PNG</button>
-      <button id="copy-btn">📋 Copy Image</button>
+      <button id="download-btn">📥 PNG</button>
+      <button id="download-svg-btn">📄 SVG</button>
+      <button id="copy-btn">📋 Copy</button>
     </div>
   </div>
 

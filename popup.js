@@ -48,11 +48,9 @@ class QRCodeGeneratorPro {
       }
     });
 
-    // Size buttons
-    document.querySelectorAll('.size-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        this.setSize(parseInt(e.target.dataset.size));
-      });
+    // Size select dropdown
+    document.getElementById('size-select').addEventListener('change', (e) => {
+      this.setSize(parseInt(e.target.value));
     });
 
     // Padding slider
@@ -71,7 +69,11 @@ class QRCodeGeneratorPro {
 
     // Download and copy buttons
     document.getElementById('download-btn').addEventListener('click', () => {
-      this.downloadQR();
+      this.downloadQR('png');
+    });
+
+    document.getElementById('download-svg-btn').addEventListener('click', () => {
+      this.downloadQR('svg');
     });
 
     document.getElementById('copy-btn').addEventListener('click', () => {
@@ -79,19 +81,20 @@ class QRCodeGeneratorPro {
     });
 
     // Auto-generate on settings change
-    ['padding-control', 'fg-color', 'bg-color'].forEach(id => {
-      document.getElementById(id).addEventListener('change', () => {
-        this.autoRegenerate();
-      });
+    ['padding-control', 'fg-color', 'bg-color', 'size-select'].forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.addEventListener('change', () => {
+          this.autoRegenerate();
+        });
+      }
     });
   }
 
   // Initialize UI with saved settings
   initializeSettings() {
-    // Set size buttons
-    document.querySelectorAll('.size-btn').forEach(btn => {
-      btn.classList.toggle('active', parseInt(btn.dataset.size) === this.settings.size);
-    });
+    // Set size select
+    document.getElementById('size-select').value = this.settings.size;
 
     // Set container class for responsive layout
     const container = document.querySelector('.container');
@@ -112,9 +115,7 @@ class QRCodeGeneratorPro {
     this.saveSettings();
 
     // Update UI
-    document.querySelectorAll('.size-btn').forEach(btn => {
-      btn.classList.toggle('active', parseInt(btn.dataset.size) === size);
-    });
+    document.getElementById('size-select').value = size;
 
     // Update container class for responsive layout
     const container = document.querySelector('.container');
@@ -232,8 +233,8 @@ class QRCodeGeneratorPro {
     downloadSection.classList.remove('show');
   }
 
-  // Download QR code as PNG
-  downloadQR() {
+  // Download QR code as PNG or SVG
+  downloadQR(format = 'png') {
     const canvas = document.querySelector('#qr-code canvas');
     if (!canvas) {
       alert('No QR code to download. Please generate a QR code first.');
@@ -241,29 +242,112 @@ class QRCodeGeneratorPro {
     }
 
     try {
-      // Create enhanced canvas with proper padding
-      const enhancedCanvas = this.createEnhancedCanvas(canvas);
-      
       // Generate filename with timestamp
       const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '');
-      const filename = `qrcode_${timestamp}.png`;
       
-      // Create download link
-      const link = document.createElement('a');
-      link.download = filename;
-      link.href = enhancedCanvas.toDataURL('image/png');
-      
-      // Trigger download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Visual feedback
-      this.showFeedback('download-btn', 'Downloaded! 📥');
+      if (format === 'svg') {
+        this.downloadSVG(timestamp);
+      } else {
+        this.downloadPNG(canvas, timestamp);
+      }
     } catch (error) {
-      console.error('Download failed:', error);
-      alert('Failed to download QR code. Please try again.');
+      console.error(`${format.toUpperCase()} download failed:`, error);
+      alert(`Failed to download QR code as ${format.toUpperCase()}. Please try again.`);
     }
+  }
+
+  // Download as PNG
+  downloadPNG(canvas, timestamp) {
+    // Create enhanced canvas with proper padding
+    const enhancedCanvas = this.createEnhancedCanvas(canvas);
+    
+    const filename = `qrcode_${timestamp}.png`;
+    
+    // Create download link
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = enhancedCanvas.toDataURL('image/png');
+    
+    // Trigger download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Visual feedback
+    this.showFeedback('download-btn', 'Downloaded! 📥');
+  }
+
+  // Download as SVG
+  downloadSVG(timestamp) {
+    const text = document.getElementById('text-input').value.trim();
+    if (!text) return;
+
+    // Create SVG QR code
+    const svgString = this.createSVGQRCode(text);
+    const filename = `qrcode_${timestamp}.svg`;
+    
+    // Create blob and download
+    const blob = new Blob([svgString], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = url;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    URL.revokeObjectURL(url);
+    
+    // Visual feedback
+    this.showFeedback('download-svg-btn', 'Downloaded! 📄');
+  }
+
+  // Create SVG QR Code
+  createSVGQRCode(text) {
+    // Simple QR code matrix generation (basic implementation)
+    // For production, you might want to use a proper QR library that supports SVG
+    const size = this.settings.size;
+    const padding = this.settings.padding;
+    const totalSize = size + (padding * 2);
+    
+    // This is a simplified SVG generation - in real implementation,
+    // you'd need a proper QR code algorithm or library that outputs SVG
+    const svgHeader = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="${totalSize}" height="${totalSize}" viewBox="0 0 ${totalSize} ${totalSize}" xmlns="http://www.w3.org/2000/svg">`;
+    
+    const svgBackground = `
+  <rect width="${totalSize}" height="${totalSize}" fill="${this.settings.backgroundColor}"/>`;
+    
+    // Get QR matrix from canvas (this is a workaround - ideally use a QR library with SVG output)
+    const canvas = document.querySelector('#qr-code canvas');
+    const ctx = canvas.getContext('2d');
+    const imageData = ctx.getImageData(0, 0, size, size);
+    
+    let svgRects = '';
+    const moduleSize = size / Math.sqrt(imageData.data.length / 4);
+    
+    // Convert canvas pixels to SVG rectangles
+    for (let y = 0; y < size; y += moduleSize) {
+      for (let x = 0; x < size; x += moduleSize) {
+        const pixelIndex = (Math.floor(y) * size + Math.floor(x)) * 4;
+        const r = imageData.data[pixelIndex];
+        const g = imageData.data[pixelIndex + 1];
+        const b = imageData.data[pixelIndex + 2];
+        
+        // If pixel is dark (close to foreground color)
+        if (r < 128 && g < 128 && b < 128) {
+          svgRects += `
+  <rect x="${x + padding}" y="${y + padding}" width="${moduleSize}" height="${moduleSize}" fill="${this.settings.foregroundColor}"/>`;
+        }
+      }
+    }
+    
+    const svgFooter = `
+</svg>`;
+    
+    return svgHeader + svgBackground + svgRects + svgFooter;
   }
 
   // Copy QR code to clipboard
@@ -335,6 +419,8 @@ class QRCodeGeneratorPro {
   // Show temporary feedback on buttons
   showFeedback(buttonId, message) {
     const button = document.getElementById(buttonId);
+    if (!button) return;
+    
     const originalText = button.innerHTML;
     
     button.innerHTML = message;

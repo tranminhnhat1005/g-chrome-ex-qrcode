@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "QR Code Generator Pro",
-  "version": "2.1.0",
-  "description": "Advanced QR code generator with customization options, download support - colors, sizes, padding and more",
+  "version": "2.2.0",
+  "description": "Advanced QR code generator with PNG/SVG download, dark blue theme - customizable sizes up to 1024px",
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
