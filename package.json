@@ -1,0 +1,23 @@
+{
+  "name": "qr-code-generator-pro",
+  "version": "2.3.0",
+  "description": "Professional QR code generator Chrome extension with PNG/SVG download, automated build system, and Chrome Web Store ready structure",
+  "main": "src/popup/popup.js",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "node scripts/dev.js",
+    "clean": "node scripts/clean.js",
+    "zip": "node scripts/zip.js",
+    "test": "node scripts/test.js",
+    "lint": "node scripts/lint.js"
+  },
+  "keywords": ["chrome-extension", "qr-code", "generator", "utility"],
+  "author": "Nak",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tranminhnhat1005/g-chrome-ex-qrcode.git"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
