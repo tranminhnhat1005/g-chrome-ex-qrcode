@@ -1,6 +1,6 @@
 {
   "name": "qr-code-generator-pro",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Professional QR code generator Chrome extension with PNG/SVG download, automated build system, and Chrome Web Store ready structure",
   "main": "src/popup/popup.js",
   "scripts": {

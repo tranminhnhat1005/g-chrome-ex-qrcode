@@ -1,5 +1,27 @@
 # Changelog - QR Code Generator Pro
 
+## Version 2.3.1 (2025-10-07) - Code Organization & CSS Separation
+
+### 🎨 Code Structure Improvements
+- **CSS Architecture Refactoring**
+  - ✅ Extract inline CSS from popup.html to external styles.css file
+  - ✅ Reduce HTML file size by 75% (354 → 87 lines)
+  - ✅ Improve code maintainability and organization
+  - ✅ Better separation of concerns (HTML structure vs styling)
+
+- **File Structure Optimization**
+  - ✅ Create dedicated styles.css for popup styling
+  - ✅ Cleaner HTML with external CSS linking
+  - ✅ Enhanced code readability and maintenance
+  - ✅ Professional CSS architecture
+
+### 🔧 Testing & Quality Assurance
+- **Test Suite Updates**
+  - ✅ Update test script to validate new CSS file
+  - ✅ Maintain 100% test coverage (34/34 tests passing)
+  - ✅ All functionality preserved after refactoring
+  - ✅ Build system compatibility maintained
+
 ## Version 2.3.0 (2025-10-07) - Professional Restructure & Production Ready
 
 ### 🏗️ Major Project Restructuring

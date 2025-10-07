@@ -1,0 +1,268 @@
+/* QR Code Generator Pro - Main Styles */
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 15px;
+  min-width: 680px;
+  max-width: 780px;
+  min-height: 520px;
+  margin: 0;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  color: #333;
+  box-sizing: border-box;
+}
+
+.container {
+  display: flex;
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  flex-direction: column;
+  gap: 20px;
+}
+
+h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 18px;
+  text-align: center;
+}
+
+.main-layout {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.main-panel {
+  display: flex;
+  gap: 20px;
+  height: 100%;
+  min-height: 300px;
+  box-sizing: border-box;
+  flex-direction: row;
+  flex: 1;
+}
+
+.left-panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.right-panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+label,
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#text-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 45px;
+  max-height: 120px;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+#text-input:focus,
+.control-item select:focus {
+  outline: none;
+  border-color: #2a5298;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.control-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.color-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.full-width-btn {
+  margin-bottom: 10px;
+}
+
+.control-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.control-item input[type="range"] {
+  margin-top: 5px;
+}
+
+.control-item input[type="color"] {
+  height: 35px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.control-item select {
+  padding: 8px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  margin-top: 5px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.range-display {
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  margin-top: 2px;
+}
+
+#generate-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(45deg, #1e3c72, #2a5298);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+#generate-btn:hover {
+  transform: translateY(-2px);
+}
+
+#generate-btn:active {
+  transform: translateY(0);
+}
+
+#qr-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+  width: 100%;
+  border: 2px dashed #dee2e6;
+  border-radius: 12px;
+  background: #f8f9fa;
+  overflow: hidden;
+  position: relative;
+  padding: 20px;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+}
+
+#qr-code canvas {
+  max-width: 100%;
+  max-height: 200px;
+  width: auto;
+  height: auto;
+  border-radius: 6px;
+  background: white;
+  border: 1px solid #e9ecef;
+}
+
+.placeholder {
+  color: #6c757d;
+  font-size: 14px;
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+  margin: 10px;
+}
+
+.size-info {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #6c757d;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: none;
+  border: 1px solid #e9ecef;
+}
+
+.size-info.show {
+  display: inline-block;
+}
+
+.download-section {
+  display: none;
+  text-align: center;
+  width: 100%;
+}
+
+.download-section.show {
+  display: block;
+}
+
+.download-section button {
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: transform 0.2s;
+  margin: 0 3px;
+}
+
+.download-section button:hover {
+  transform: translateY(-1px);
+}
+
+#download-btn {
+  background: linear-gradient(45deg, #1565c0, #1976d2);
+}
+
+#download-svg-btn {
+  background: linear-gradient(45deg, #0d47a1, #1565c0);
+}
+
+#copy-btn {
+  background: linear-gradient(45deg, #424242, #616161);
+}

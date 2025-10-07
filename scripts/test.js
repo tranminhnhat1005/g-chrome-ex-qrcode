@@ -30,6 +30,7 @@ const requiredFiles = [
   'manifest.json',
   'src/popup/popup.html',
   'src/popup/popup.js',
+  'src/popup/styles.css',
   'src/lib/qrcode.min.js',
   'src/assets/icons/icon16.png',
   'src/assets/icons/icon48.png',
